@@ -17,7 +17,7 @@ export default eventHandler(async (event) => {
         episode: imdb.split(':')[2],
     }
 
-    const output: any = { streams: [] };
+    const output: any = { sources: [] };
 
     if (scrape_english == "true") {
         const tmdb = await convertImdbIdToTmdbId(mediaInfo.imdbid)
@@ -25,24 +25,22 @@ export default eventHandler(async (event) => {
         for (const source of sources) {
             const stream = await getMedia(media, source)
             for (const embed in stream) {
-                    const streams = stream[embed].stream;
-                    for (const streamItem of streams) {
+                    const sources = stream[embed].stream;
+                    for (const streamItem of sources) {
                         if (streamItem.type === "file") {
                             for (const qualityKey in streamItem.qualities) {
                                 const quality = streamItem.qualities[qualityKey];
-                                output.streams.push({
-                                    name: "Stremify",
-                                    type: "url",
-                                    url: quality.url,
-                                    title: `${source} - ${qualityKey}p (${embed})`
+                                output.sources.push({
+                                file: quality.url,
+                                type: "mp4",
+                                label: `${qualityKey}`
                                 });
                             }
                         } else if (streamItem.type == "hls") {
-                            output.streams.push({
-                                name: "Stremify",
-                                type: "url",
-                                url: streamItem.playlist,
-                                title: `${source} - auto (${embed})`
+                            output.sources.push({
+                            file: streamItem.playlist,
+                            type: "hls",
+                            label: `auto`
                             })
                         }
                     }
@@ -55,7 +53,7 @@ export default eventHandler(async (event) => {
     const foreignstreams = await scrapeCustom(mediaInfo.imdbid, mediaInfo.season, mediaInfo.episode)
 
     for (const foreignstream of foreignstreams) {
-        output.streams.push(foreignstream)
+        output.sources.push(foreignstream)
     }
 
     return output;

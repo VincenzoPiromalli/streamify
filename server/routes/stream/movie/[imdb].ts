@@ -8,7 +8,7 @@ const sources = ["showbox", "vidsrc", "vidsrcto"] // the other sources seemingly
 
 export default eventHandler(async (event) => {
     const output: any = {
-        streams: []
+        sources: []
     };
 
     const path = getRouterParam(event, 'imdb')
@@ -21,12 +21,12 @@ export default eventHandler(async (event) => {
         for (const source of sources) {
             const stream = await getMedia(media, source)
             for (const embed in stream) {
-                const streams = stream[embed].stream;
-                for (const streamItem of streams) {
+                const sources = stream[embed].stream;
+                for (const streamItem of sources) {
                     if (streamItem.type === "file") {
                         for (const qualityKey in streamItem.qualities) {
                             const quality = streamItem.qualities[qualityKey];
-                            output.streams.push({
+                            output.sources.push({
                                 file: quality.url,
                                 type: "mp4",
                                 label: `${qualityKey}`
@@ -34,7 +34,7 @@ export default eventHandler(async (event) => {
                             });
                         }
                     } else if (streamItem.type == "hls") {
-                        output.streams.push({
+                        output.sources.push({
                             file: streamItem.playlist,
                             type: "hls",
                             label: `auto`
@@ -51,7 +51,7 @@ export default eventHandler(async (event) => {
     const foreignstreams = await scrapeCustom(imdb, 0, 0)
 
     for (const foreignstream of foreignstreams) {
-        output.streams.push(foreignstream)
+        output.sources.push(foreignstream)
     }
 
     return output;

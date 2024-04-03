@@ -27,15 +27,16 @@ export default eventHandler(async (event) => {
                         for (const qualityKey in streamItem.qualities) {
                             const quality = streamItem.qualities[qualityKey];
                             output.streams.push({
-                                type: "mp4",
                                 file: quality.url,
-                                label: `${qualityKey}p`
+                                type: "mp4",
+                                label: `${qualityKey}`
+
                             });
                         }
                     } else if (streamItem.type == "hls") {
                         output.streams.push({
-                            type: "hls",
                             file: streamItem.playlist,
+                            type: "hls",
                             label: `auto`
                         })
                     }

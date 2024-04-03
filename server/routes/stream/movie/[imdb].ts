@@ -27,18 +27,16 @@ export default eventHandler(async (event) => {
                         for (const qualityKey in streamItem.qualities) {
                             const quality = streamItem.qualities[qualityKey];
                             output.streams.push({
-                                name: "Stremify",
-                                type: "url",
-                                url: quality.url,
-                                title: `${source} - ${qualityKey}p (${embed})`
+                                type: "mp4",
+                                file: quality.url,
+                                label: `${qualityKey}p`
                             });
                         }
                     } else if (streamItem.type == "hls") {
                         output.streams.push({
-                            name: "Stremify",
-                            type: "url",
-                            url: streamItem.playlist,
-                            title: `${source} - auto (${embed})`
+                            type: "hls",
+                            file: streamItem.playlist,
+                            label: `auto`
                         })
                     }
                 }
